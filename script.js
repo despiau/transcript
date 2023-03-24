@@ -1,1 +1,126 @@
-function _0x5ea7(_0x21b03b,_0x30acc9){const _0xe8a9f8=_0xe8a9();return _0x5ea7=function(_0x5ea755,_0x10ed0a){_0x5ea755=_0x5ea755-0x1a8;let _0x58d407=_0xe8a9f8[_0x5ea755];return _0x58d407;},_0x5ea7(_0x21b03b,_0x30acc9);}const _0x411f86=_0x5ea7;(function(_0x16c23d,_0x50ea37){const _0x1e321f=_0x5ea7,_0x1f92d3=_0x16c23d();while(!![]){try{const _0x1e32a1=parseInt(_0x1e321f(0x1d4))/0x1+-parseInt(_0x1e321f(0x1c4))/0x2+parseInt(_0x1e321f(0x1c6))/0x3*(-parseInt(_0x1e321f(0x1ad))/0x4)+parseInt(_0x1e321f(0x1b0))/0x5*(parseInt(_0x1e321f(0x1c0))/0x6)+-parseInt(_0x1e321f(0x1c5))/0x7*(parseInt(_0x1e321f(0x1bc))/0x8)+-parseInt(_0x1e321f(0x1d7))/0x9+parseInt(_0x1e321f(0x1cd))/0xa;if(_0x1e32a1===_0x50ea37)break;else _0x1f92d3['push'](_0x1f92d3['shift']());}catch(_0x311c46){_0x1f92d3['push'](_0x1f92d3['shift']());}}}(_0xe8a9,0xa0b78));const apiKey='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',headers={'Content-Type':_0x411f86(0x1dc),'Authorization':_0x411f86(0x1d9)+apiKey},prompt='Start\x20a\x20conversation\x20with\x20me',form=document[_0x411f86(0x1d3)](_0x411f86(0x1c1)),input=document[_0x411f86(0x1d3)](_0x411f86(0x1d2)),chatBox=document['querySelector'](_0x411f86(0x1d5)),micButton=document[_0x411f86(0x1d3)](_0x411f86(0x1bb)),liveTranscript=document[_0x411f86(0x1d3)]('#live-transcript'),params={'model':_0x411f86(0x1b8),'temperature':0x1,'max_tokens':0xc8};let conversationTranscript='';window[_0x411f86(0x1a8)]=window[_0x411f86(0x1bd)]||window[_0x411f86(0x1a8)];const recognition=new window['SpeechRecognition']();recognition['interimResults']=!![],recognition[_0x411f86(0x1b4)]=!![],recognition['addEventListener']('result',_0x525d56=>{const _0x4c99d7=_0x411f86;let _0x338a77='';for(let _0x2b732d=_0x525d56[_0x4c99d7(0x1ca)],_0x277a61=_0x525d56[_0x4c99d7(0x1d8)][_0x4c99d7(0x1c7)];_0x2b732d<_0x277a61;_0x2b732d++){let _0x3e3f2b=_0x525d56['results'][_0x2b732d][0x0][_0x4c99d7(0x1b1)];_0x525d56['results'][_0x2b732d][_0x4c99d7(0x1b3)]?(input[_0x4c99d7(0x1d0)]+=_0x3e3f2b+'\x20',sendMessage(input['value'][_0x4c99d7(0x1d6)]()),input[_0x4c99d7(0x1d0)]='',liveTranscript[_0x4c99d7(0x1a9)]=_0x4c99d7(0x1cc)):(liveTranscript[_0x4c99d7(0x1a9)]=_0x338a77+_0x3e3f2b,_0x338a77+=_0x3e3f2b);}}),recognition[_0x411f86(0x1b6)](_0x411f86(0x1c2),_0xd47734=>{const _0xf0a3a6=_0x411f86;console[_0xf0a3a6(0x1c2)]('Error\x20detecting\x20speech'),recognition[_0xf0a3a6(0x1db)]();}),micButton['addEventListener'](_0x411f86(0x1c9),toggleSpeechRecognition);function _0xe8a9(){const _0x23e631=['stop','application/json','\x0aChatGPT:\x20','btn-secondary','SpeechRecognition','innerText','classList','btn-danger','scrollHeight','4572508qskvLM','text','add','3132245lLXJwt','transcript','\x0a\x20\x20\x20\x20<div\x20class=\x22list-group-item\x22>\x0a\x20\x20\x20\x20\x20\x20<strong>You:</strong>\x20','isFinal','continuous','POST','addEventListener','beforeend','text-davinci-003','max_tokens','\x0a\x20\x20\x20\x20</div>\x0a\x20\x20','#mic-button','8PMiPhg','webkitSpeechRecognition','scrollTop','Human:\x20','6tUEAgn','#input-box','error','choices','2254114ficWQO','3480785rbzLqF','3IlMTFQ','length','🔴\x20Stop','click','resultIndex','preventDefault','Waiting\x20for\x20speech...','27170470YWYxfJ','remove','insertAdjacentHTML','value','submit','#input','querySelector','1310795lIDTcX','#chat-box','trim','11057004YuqIgz','results','Bearer\x20','json'];_0xe8a9=function(){return _0x23e631;};return _0xe8a9();}function toggleSpeechRecognition(){const _0x5bd9f9=_0x411f86;micButton[_0x5bd9f9(0x1a9)]==='🎤'?(micButton[_0x5bd9f9(0x1a9)]=_0x5bd9f9(0x1c8),micButton[_0x5bd9f9(0x1aa)][_0x5bd9f9(0x1ce)](_0x5bd9f9(0x1de)),micButton[_0x5bd9f9(0x1aa)]['add'](_0x5bd9f9(0x1ab)),recognition['start']()):(micButton[_0x5bd9f9(0x1a9)]='🎤',micButton[_0x5bd9f9(0x1aa)][_0x5bd9f9(0x1ce)](_0x5bd9f9(0x1ab)),micButton[_0x5bd9f9(0x1aa)][_0x5bd9f9(0x1af)](_0x5bd9f9(0x1de)),recognition[_0x5bd9f9(0x1db)]());}form[_0x411f86(0x1b6)](_0x411f86(0x1d1),_0x1b352b=>{const _0x58c1c7=_0x411f86;_0x1b352b[_0x58c1c7(0x1cb)]();const _0x5f39bb=input[_0x58c1c7(0x1d0)];input[_0x58c1c7(0x1d0)]='',sendMessage(_0x5f39bb);});async function sendMessage(_0x463afa){const _0x45ce8a=_0x411f86,_0x48bcce=conversationTranscript==''?prompt+':\x20'+_0x463afa:_0x463afa,_0x40fd4a=await fetch('https://api.openai.com/v1/engines/text-davinci-003/completions',{'method':_0x45ce8a(0x1b5),'headers':headers,'body':JSON['stringify']({'prompt':_0x48bcce,'temperature':params['temperature'],'max_tokens':params[_0x45ce8a(0x1b9)],'n':0x1,'frequency_penalty':0x0,'presence_penalty':0x0})}),_0x125b3f=await _0x40fd4a[_0x45ce8a(0x1da)](),_0x389ea8=_0x125b3f[_0x45ce8a(0x1c3)][0x0][_0x45ce8a(0x1ae)],_0x4ca912=_0x45ce8a(0x1b2)+_0x463afa+'\x0a\x20\x20\x20\x20</div>\x0a\x20\x20\x20\x20<div\x20class=\x22list-group-item\x22>\x0a\x20\x20\x20\x20\x20\x20<strong>ChatGPT:</strong>\x20'+_0x389ea8+_0x45ce8a(0x1ba);chatBox[_0x45ce8a(0x1cf)](_0x45ce8a(0x1b7),_0x4ca912),chatBox[_0x45ce8a(0x1be)]=chatBox[_0x45ce8a(0x1ac)],conversationTranscript+=_0x45ce8a(0x1bf)+_0x463afa+_0x45ce8a(0x1dd)+_0x389ea8+'\x0a\x0a';}
+// Set up authentication
+const apiKey = "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";
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': `Bearer ${apiKey}`
+}
+
+// Define conversation starting prompt
+const prompt = "Start a conversation with me";
+
+// Get the elements we need from the HTML
+const form = document.querySelector('#input-box');
+const input = document.querySelector('#input');
+const chatBox = document.querySelector('#chat-box');
+const micButton = document.querySelector('#mic-button');
+const liveTranscript = document.querySelector('#live-transcript');
+
+// Define API completions parameters
+const params = {
+  'model': 'text-davinci-003',
+  'temperature': 1,
+  'max_tokens': 200,
+}
+
+// Define conversation transcript variable
+let conversationTranscript = "";
+
+// Initialize Speech Recognition
+window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
+const recognition = new window.SpeechRecognition();
+recognition.interimResults = true;
+recognition.continuous = true;
+
+// Handle speech recognition result
+recognition.addEventListener('result', (event) => {
+  let interimTranscript = '';
+  for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
+    let transcript_content = event.results[i][0].transcript;
+    if (event.results[i].isFinal) {
+      input.value += transcript_content + " ";
+      sendMessage(input.value.trim());
+      input.value = '';
+
+      // Clear the live transcript display after each message is sent
+      liveTranscript.innerText = 'Waiting for speech...';
+    } else {
+      // Update the live transcript display in real time
+      liveTranscript.innerText = interimTranscript + transcript_content;
+
+      interimTranscript += transcript_content;
+    }
+  }
+});
+
+// Handle errors in recognition
+recognition.addEventListener('error', (event) => {
+  console.error('Error detecting speech');
+  recognition.stop();
+});
+
+// Handle mic button click event
+micButton.addEventListener('click', toggleSpeechRecognition);
+
+// Define function to start or stop speech recognition
+function toggleSpeechRecognition() {
+  if (micButton.innerText === "🎤") {
+    micButton.innerText = '🔴 Stop';
+    micButton.classList.remove('btn-secondary');
+    micButton.classList.add('btn-danger');
+    recognition.start();
+  } else {
+    micButton.innerText = '🎤';
+    micButton.classList.remove('btn-danger');
+    micButton.classList.add('btn-secondary');
+    recognition.stop();
+  }
+}
+
+// Handle form submission (for text input)
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const message = input.value;
+  input.value = '';
+  sendMessage(message);
+});
+
+// Define function to send message and add it to the HTML
+async function sendMessage(message) {
+  // Append chat message to prompt if this is the start of the conversation
+  const chat_input = conversationTranscript == "" ? prompt + ": " + message : message;
+
+  // Call OpenAI API
+  const response = await fetch("https://api.openai.com/v1/engines/text-davinci-003/completions", {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify({
+      prompt: chat_input,
+      temperature: params.temperature,
+      max_tokens: params.max_tokens,
+      n: 1,
+      frequency_penalty: 0,
+      presence_penalty: 0
+    })
+  });
+
+  // Extract the generated message from the response
+  const data = await response.json();
+  const message_response = data.choices[0].text;
+
+  // Add the message to the HTML
+  const messageHTML = `
+    <div class="list-group-item">
+      <strong>You:</strong> ${message}
+    </div>
+    <div class="list-group-item">
+      <strong>ChatGPT:</strong> ${message_response}
+    </div>
+  `;
+  chatBox.insertAdjacentHTML('beforeend', messageHTML);
+
+  // Scroll to the bottom of the chat box
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  // Add the message to the conversation transcript
+  conversationTranscript += `Human: ${message}\nChatGPT: ${message_response}\n\n`;
+}
