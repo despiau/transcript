@@ -1,5 +1,5 @@
 // Set up authentication
-const apiKey = "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";
+const apiKey = "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";
 const headers = {
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${apiKey}`
