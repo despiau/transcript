@@ -1,10 +1,11 @@
 const chatbox = document.querySelector('#chat-box');
-const saveButton = document.querySelector('.save-btn');
+const saveButton = document.querySelector('#save-button');
 const micButton = document.querySelector('#mic-button');
 const recognition = new window.webkitSpeechRecognition();
-const liveTranscriptElement = document.querySelector('#live-transcript'); 
+const liveTranscriptElement = document.querySelector('#live-transcript');
 const noteInput = document.querySelector('#input');
 const addNoteButton = document.querySelector('#submit-button');
+const scrollBottomButton = document.querySelector('#scroll-bottom-btn');
 
 let isRecording = false;
 let currentTranscript = '';
@@ -65,16 +66,13 @@ function formatMessage(message) {
   return uniqueWords.join(' ');
 }
 
-let previousMessage = '';
-
 function addMessage(message, speaker) {
-  if (message !== previousMessage) {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('list-group-item');
-    messageElement.innerText = `${speaker}: ${message}`;
-    chatbox.appendChild(messageElement);
-    previousMessage = message;
-  }
+  const timeStamp = new Date().toLocaleTimeString();
+  const messageElement = document.createElement('div');
+  messageElement.classList.add('list-group-item');
+  messageElement.innerHTML = `<strong>${speaker}:</strong> ${message}<br><span class="timestamp">${timeStamp}</span>`;
+  chatbox.appendChild(messageElement);
+  scrollChatboxToBottom();
 }
 
 function scrollChatboxToBottom() {
@@ -85,8 +83,44 @@ addNoteButton.addEventListener('click', (event) => {
   event.preventDefault();
   const noteText = noteInput.value.trim();
   if (noteText) {
-    addMessage(noteText, 'User');
+    addMessage(noteText, 'Note');
     scrollChatboxToBottom();
     noteInput.value = '';
   }
+});
+
+function saveTranscript() {
+  const date = new Date().toLocaleDateString();
+  const meetingTitle = `Transcription from Meeting [${date}]`;
+  let transcript = `${meetingTitle}\n`;
+
+  chatbox.childNodes.forEach(node => {
+    const speaker = node.querySelector('strong').textContent;
+    const message = node.childNodes[1].textContent.trim();
+    const timeStamp = node.querySelector('.timestamp').textContent;
+    transcript += `${timeStamp} - ${speaker} - ${message}\n`;
+  });
+
+  const totalCharacters = transcript.length;
+  const totalWords = transcript.split(/\s+/).length - 1; // Exclude line breaks
+  const totalMeetingTime = (chatbox.childNodes.length * 2).toFixed(2); // Assuming 2 seconds per message
+
+  transcript += `\nTotal Characters: ${totalCharacters}\n`;
+  transcript += `Total Words: ${totalWords}\n`;
+  transcript += `Total Meeting Time: ${totalMeetingTime} seconds\n`;
+
+  let blob = new Blob([transcript], { type: 'text/plain;charset=utf-8' });
+  let link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'transcript.txt';
+  link.click();
+}
+
+saveButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  saveTranscript();
+});
+
+scrollBottomButton.addEventListener('click', () => {
+  scrollChatboxToBottom();
 });
