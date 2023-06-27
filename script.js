@@ -1,126 +1,157 @@
-// Set up authentication
-const apiKey = "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";
-const headers = {
-  'Content-Type': 'application/json',
-  'Authorization': `Bearer ${apiKey}`
+const chatbox = document.querySelector('.chatbox');
+const saveButton = document.querySelector('.save-btn');
+const micButton = document.querySelector('.mic-btn');
+const recognition = new window.webkitSpeechRecognition();
+const liveTranscriptElement = document.querySelector('.live-transcript p'); 
+const noteInput = document.querySelector('.note-input input');
+const addNoteButton = document.querySelector('.note-input button');
+
+let isRecording = false;
+let currentTranscript = '';
+
+micButton.addEventListener('click', () => {
+  if (!isRecording) {
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+    recognition.addEventListener('result', handleRecognitionResult);
+    recognition.start();
+    micButton.classList.add('recording');
+    micButton.innerHTML = '🔴';
+  } else {
+    recognition.stop();
+    micButton.classList.remove('recording');
+    micButton.innerHTML = '🎤';
+    recognition.removeEventListener('result', handleRecognitionResult);
+  }
+  isRecording = !isRecording;
+});
+
+function handleRecognitionResult(event) {
+  const results = event.results;
+
+  // Get the last result from the event
+  const lastResult = results[results.length - 1];
+
+  // Get the transcript from the last result
+  const transcript = lastResult[0].transcript.trim();
+
+  // Update live transcript
+  updateLiveTranscript(transcript);
+
+  if (lastResult.isFinal) {
+    const message = formatMessage(transcript);
+
+    if (message) {
+      addMessage(message, 'Speaker');
+      scrollChatboxToBottom();
+    }
+
+    // Clear live transcript
+    updateLiveTranscript('');
+  }
 }
 
-// Define conversation starting prompt
-const prompt = "Start a conversation with me";
-
-// Get the elements we need from the HTML
-const form = document.querySelector('#input-box');
-const input = document.querySelector('#input');
-const chatBox = document.querySelector('#chat-box');
-const micButton = document.querySelector('#mic-button');
-const liveTranscript = document.querySelector('#live-transcript');
-
-// Define API completions parameters
-const params = {
-  'model': 'text-davinci-003',
-  'temperature': 1,
-  'max_tokens': 200,
+function updateLiveTranscript(transcript) {
+  liveTranscriptElement.innerText = transcript;
 }
 
-// Define conversation transcript variable
-let conversationTranscript = "";
+function formatMessage(message) {
+  const words = message.split(' ');
 
-// Initialize Speech Recognition
-window.SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
-const recognition = new window.SpeechRecognition();
-recognition.interimResults = true;
-recognition.continuous = true;
+  // Remove duplicate words
+  const uniqueWords = [...new Set(words)];
 
-// Handle speech recognition result
-recognition.addEventListener('result', (event) => {
-  let interimTranscript = '';
-  for (let i = event.resultIndex, len = event.results.length; i < len; i++) {
-    let transcript_content = event.results[i][0].transcript;
-    if (event.results[i].isFinal) {
-      input.value += transcript_content + " ";
-      sendMessage(input.value.trim());
-      input.value = '';
-
-      // Clear the live transcript display after each message is sent
-      liveTranscript.innerText = 'Waiting for speech...';
-    } else {
-      // Update the live transcript display in real time
-      liveTranscript.innerText = interimTranscript + transcript_content;
-
-      interimTranscript += transcript_content;
+  // Capitalize the first letter of each sentence
+  for (let i = 0; i < uniqueWords.length; i++) {
+    if (i === 0 || uniqueWords[i - 1].endsWith('.')) {
+      uniqueWords[i] = uniqueWords[i][0].toUpperCase() + uniqueWords[i].substring(1);
     }
   }
-});
 
-// Handle errors in recognition
-recognition.addEventListener('error', (event) => {
-  console.error('Error detecting speech');
-  recognition.stop();
-});
+  return uniqueWords.join(' ');
+}
 
-// Handle mic button click event
-micButton.addEventListener('click', toggleSpeechRecognition);
+let previousMessage = '';
 
-// Define function to start or stop speech recognition
-function toggleSpeechRecognition() {
-  if (micButton.innerText === "🎤") {
-    micButton.innerText = '🔴 Stop';
-    micButton.classList.remove('btn-secondary');
-    micButton.classList.add('btn-danger');
-    recognition.start();
-  } else {
-    micButton.innerText = '🎤';
-    micButton.classList.remove('btn-danger');
-    micButton.classList.add('btn-secondary');
-    recognition.stop();
+function addMessage(message, speaker) {
+  if (message !== previousMessage) {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
+    messageElement.classList.add(speaker.toLowerCase());
+
+    const messageBubbleElement = document.createElement('div');
+    messageBubbleElement.classList.add('message-bubble');
+
+    const messageTextElement = document.createElement('p');
+    messageTextElement.innerText = message;
+
+    const timestampElement = document.createElement('div');
+    timestampElement.classList.add('timestamp');
+    timestampElement.innerText = getTimeStamp();
+
+    messageBubbleElement.appendChild(messageTextElement);
+    messageBubbleElement.appendChild(timestampElement);
+    messageElement.appendChild(messageBubbleElement);
+    chatbox.appendChild(messageElement);
+
+    previousMessage = message;
   }
 }
 
-// Handle form submission (for text input)
-form.addEventListener('submit', (event) => {
-  event.preventDefault();
-  const message = input.value;
-  input.value = '';
-  sendMessage(message);
-});
+function scrollChatboxToBottom() {
+  setTimeout(() => {
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }, 100);
+}
 
-// Define function to send message and add it to the HTML
-async function sendMessage(message) {
-  // Append chat message to prompt if this is the start of the conversation
-  const chat_input = conversationTranscript == "" ? prompt + ": " + message : message;
+function saveTranscript() {
+  const messages = chatbox.querySelectorAll('.message');
+  let transcript = '';
 
-  // Call OpenAI API
-  const response = await fetch("https://api.openai.com/v1/engines/text-davinci-003/completions", {
-    method: 'POST',
-    headers: headers,
-    body: JSON.stringify({
-      prompt: chat_input,
-      temperature: params.temperature,
-      max_tokens: params.max_tokens,
-      n: 1,
-      frequency_penalty: 0,
-      presence_penalty: 0
-    })
+  messages.forEach((message) => {
+    const messageTextElement = message.querySelector('p');
+    const timestampElement = message.querySelector('.timestamp');
+    const speakerElement = message.classList.contains('speaker') ? 'Speaker' : (message.classList.contains('note') ? 'Note' : 'Unknown');
+
+    const messageText = messageTextElement.innerText;
+    const timestamp = timestampElement.innerText;
+
+    transcript += `[${timestamp}] [${speakerElement}] ${messageText}\n`;
   });
 
-  // Extract the generated message from the response
-  const data = await response.json();
-  const message_response = data.choices[0].text;
-
-  // Add the message to the HTML
-  const messageHTML = `
-    <div class="list-group-item">
-      <strong>You:</strong> ${message}
-    </div>
-    <div class="list-group-item">
-      <strong>ChatGPT:</strong> ${message_response}
-    </div>
-  `;
-  chatBox.insertAdjacentHTML('beforeend', messageHTML);
-
-  // Scroll to the bottom of the chat box
-  chatBox.scrollTop = chatBox.scrollHeight;
-
-  // Add the message to the conversation transcript
-  conversationTranscript += `Human: ${message}\nChatGPT: ${message_response}\n\n`;
+  const element = document.createElement('a');
+  const file = new Blob([transcript], {type: 'text/plain'});
+  element.href = URL.createObjectURL(file);
+  element.download = 'transcript.txt';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
 }
+
+saveButton.addEventListener('click', () => {
+  saveTranscript();
+});
+
+function getTimeStamp() {
+  const date = new Date();
+  const hours = date.getHours() % 12 || 12;
+  const minutes = addZeroPadding(date.getMinutes());
+  const seconds = addZeroPadding(date.getSeconds());
+  const amOrPm = date.getHours() >= 12 ? 'pm' : 'am';
+  return `${hours}:${minutes}:${seconds} ${amOrPm}`;
+}
+
+function addZeroPadding(number) {
+  return number < 10 ? `0${number}` : `${number}`;
+}
+
+// Add event listener to add notes
+addNoteButton.addEventListener('click', () => {
+  const noteText = noteInput.value.trim();
+  if (noteText) {
+    addMessage(noteText, 'Note');
+    scrollChatboxToBottom();
+    noteInput.value = '';
+  }
+});
