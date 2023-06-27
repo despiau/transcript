@@ -9,6 +9,27 @@ const addNoteButton = document.querySelector('.note-input button');
 let isRecording = false;
 let currentTranscript = '';
 
+let mediaRecorder;
+let chunks = [];
+
+navigator.mediaDevices.getUserMedia({ audio: true })
+  .then(function(stream) {
+    mediaRecorder = new MediaRecorder(stream);
+    
+    mediaRecorder.ondataavailable = function(e) {
+      chunks.push(e.data);
+    };
+
+    mediaRecorder.onstop = function() {
+      let blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
+      chunks = [];
+      let audioURL = window.URL.createObjectURL(blob);
+      // You might want to add a way for the user to download the recorded audio
+      // or you could save it to a server.
+      console.log(audioURL);
+    };
+});
+
 micButton.addEventListener('click', () => {
   if (!isRecording) {
     recognition.continuous = true;
@@ -18,36 +39,38 @@ micButton.addEventListener('click', () => {
     recognition.start();
     micButton.classList.add('recording');
     micButton.innerHTML = '🔴';
+    
+    // Start mediaRecorder
+    mediaRecorder.start();
   } else {
     recognition.stop();
     micButton.classList.remove('recording');
     micButton.innerHTML = '🎤';
     recognition.removeEventListener('result', handleRecognitionResult);
+    
+    // Stop mediaRecorder
+    mediaRecorder.stop();
   }
   isRecording = !isRecording;
 });
 
+recognition.addEventListener('end', () => {
+  if (isRecording) {
+    recognition.start();
+  }
+});
+
 function handleRecognitionResult(event) {
   const results = event.results;
-
-  // Get the last result from the event
   const lastResult = results[results.length - 1];
-
-  // Get the transcript from the last result
   const transcript = lastResult[0].transcript.trim();
-
-  // Update live transcript
   updateLiveTranscript(transcript);
-
   if (lastResult.isFinal) {
     const message = formatMessage(transcript);
-
     if (message) {
       addMessage(message, 'Speaker');
       scrollChatboxToBottom();
     }
-
-    // Clear live transcript
     updateLiveTranscript('');
   }
 }
@@ -58,17 +81,12 @@ function updateLiveTranscript(transcript) {
 
 function formatMessage(message) {
   const words = message.split(' ');
-
-  // Remove duplicate words
   const uniqueWords = [...new Set(words)];
-
-  // Capitalize the first letter of each sentence
   for (let i = 0; i < uniqueWords.length; i++) {
     if (i === 0 || uniqueWords[i - 1].endsWith('.')) {
       uniqueWords[i] = uniqueWords[i][0].toUpperCase() + uniqueWords[i].substring(1);
     }
   }
-
   return uniqueWords.join(' ');
 }
 
@@ -79,22 +97,17 @@ function addMessage(message, speaker) {
     const messageElement = document.createElement('div');
     messageElement.classList.add('message');
     messageElement.classList.add(speaker.toLowerCase());
-
     const messageBubbleElement = document.createElement('div');
     messageBubbleElement.classList.add('message-bubble');
-
     const messageTextElement = document.createElement('p');
     messageTextElement.innerText = message;
-
     const timestampElement = document.createElement('div');
     timestampElement.classList.add('timestamp');
     timestampElement.innerText = getTimeStamp();
-
     messageBubbleElement.appendChild(messageTextElement);
     messageBubbleElement.appendChild(timestampElement);
     messageElement.appendChild(messageBubbleElement);
     chatbox.appendChild(messageElement);
-
     previousMessage = message;
   }
 }
@@ -108,18 +121,14 @@ function scrollChatboxToBottom() {
 function saveTranscript() {
   const messages = chatbox.querySelectorAll('.message');
   let transcript = '';
-
   messages.forEach((message) => {
     const messageTextElement = message.querySelector('p');
     const timestampElement = message.querySelector('.timestamp');
     const speakerElement = message.classList.contains('speaker') ? 'Speaker' : (message.classList.contains('note') ? 'Note' : 'Unknown');
-
     const messageText = messageTextElement.innerText;
     const timestamp = timestampElement.innerText;
-
     transcript += `[${timestamp}] [${speakerElement}] ${messageText}\n`;
   });
-
   const element = document.createElement('a');
   const file = new Blob([transcript], {type: 'text/plain'});
   element.href = URL.createObjectURL(file);
@@ -146,7 +155,6 @@ function addZeroPadding(number) {
   return number < 10 ? `0${number}` : `${number}`;
 }
 
-// Add event listener to add notes
 addNoteButton.addEventListener('click', () => {
   const noteText = noteInput.value.trim();
   if (noteText) {
