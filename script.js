@@ -1,6 +1,8 @@
 const chatbox = document.querySelector('#chat-box');
 const saveButton = document.querySelector('#save-button');
+const saveCleanButton = document.querySelector('#save-clean-button');
 const micButton = document.querySelector('#mic-button');
+const languageSelection = document.querySelector('#language-selection');
 const recognition = new window.webkitSpeechRecognition();
 const liveTranscriptElement = document.querySelector('#live-transcript');
 const noteInput = document.querySelector('#input');
@@ -15,7 +17,7 @@ micButton.addEventListener('click', (event) => {
   if (!isRecording) {
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = 'en-US';
+    recognition.lang = languageSelection.value;
     recognition.addEventListener('result', handleRecognitionResult);
     recognition.start();
     micButton.classList.add('recording');
@@ -70,6 +72,9 @@ function addMessage(message, speaker) {
   const timeStamp = new Date().toLocaleTimeString();
   const messageElement = document.createElement('div');
   messageElement.classList.add('list-group-item');
+  if (speaker === 'Note') {
+    messageElement.classList.add('note');
+  }
   messageElement.innerHTML = `<strong>${speaker}:</strong> ${message}<br><span class="timestamp">${timeStamp}</span>`;
   chatbox.appendChild(messageElement);
   scrollChatboxToBottom();
@@ -89,38 +94,60 @@ addNoteButton.addEventListener('click', (event) => {
   }
 });
 
+noteInput.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    const noteText = noteInput.value.trim();
+    if (noteText) {
+      addMessage(noteText, 'Note');
+      scrollChatboxToBottom();
+      noteInput.value = '';
+    }
+  }
+});
+
 function saveTranscript() {
   const date = new Date().toLocaleDateString();
   const meetingTitle = `Transcription from Meeting [${date}]`;
-  let transcript = `${meetingTitle}\n`;
+  let fullTranscript = `${meetingTitle}\n\n`;
+  let cleanTranscript = `${meetingTitle}\n\n`;
 
   chatbox.childNodes.forEach(node => {
     const speaker = node.querySelector('strong').textContent;
     const message = node.childNodes[1].textContent.trim();
     const timeStamp = node.querySelector('.timestamp').textContent;
-    transcript += `${timeStamp} - ${speaker} - ${message}\n`;
+    fullTranscript += `${timeStamp} - ${speaker} - ${message}\n`;
+    cleanTranscript += `- ${message}\n`;
   });
 
-  const totalCharacters = transcript.length;
-  const totalWords = transcript.split(/\s+/).length - 1; // Exclude line breaks
-  const totalMeetingTime = (chatbox.childNodes.length * 2).toFixed(2); // Assuming 2 seconds per message
+  const totalCharacters = fullTranscript.length;
+  const totalWords = fullTranscript.split(/\s+/).length - 1; // Exclude line breaks
 
-  transcript += `\nTotal Characters: ${totalCharacters}\n`;
-  transcript += `Total Words: ${totalWords}\n`;
-  transcript += `Total Meeting Time: ${totalMeetingTime} seconds\n`;
+  fullTranscript += `\nTotal Characters: ${totalCharacters}\n`;
+  fullTranscript += `Total Words: ${totalWords}\n`;
 
-  let blob = new Blob([transcript], { type: 'text/plain;charset=utf-8' });
-  let link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'transcript.txt';
-  link.click();
+  return {
+    fullTranscript,
+    cleanTranscript
+  };
 }
 
-saveButton.addEventListener('click', (event) => {
-  event.preventDefault();
-  saveTranscript();
+saveButton.addEventListener('click', () => {
+  const transcripts = saveTranscript();
+  const blob = new Blob([transcripts.fullTranscript], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `transcript_${new Date().toISOString().replace(/:|\./g, '_')}.txt`;
+  link.click();
 });
 
-scrollBottomButton.addEventListener('click', () => {
-  scrollChatboxToBottom();
+saveCleanButton.addEventListener('click', () => {
+  const transcripts = saveTranscript();
+  const blob = new Blob([transcripts.cleanTranscript], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `clean_transcript_${new Date().toISOString().replace(/:|\./g, '_')}.txt`;
+  link.click();
 });
