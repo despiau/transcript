@@ -44,3 +44,46 @@ body {
   z-index: 999;
 }
 
+#input {
+  height: 0px;
+}
+
+.language-selector {
+  width: 150px;
+}
+
+.input-group-append .btn {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.input-form .btn {
+  height: 38px;
+}
+
+.save-button {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  margin-right: 5px; /* Add margin-right to create space between buttons */
+}
+
+.save-clean-button {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.logo i {
+  margin-right: 10px;
+}
+
+.list-group-item.note {
+  background-color: #ffffcc; /* Light yellow background color for notes */
+}
