@@ -1,3 +1,5 @@
+// script.js
+
 const chatbox = document.querySelector('#chat-box');
 const saveButton = document.querySelector('#save-button');
 const saveCleanButton = document.querySelector('#save-clean-button');
@@ -8,6 +10,9 @@ const liveTranscriptElement = document.querySelector('#live-transcript');
 const noteInput = document.querySelector('#input');
 const addNoteButton = document.querySelector('#submit-button');
 const scrollBottomButton = document.querySelector('#scroll-bottom-btn');
+const hamburgerMenuButton = document.querySelector('.hamburger-menu');
+const sidebar = document.querySelector('.sidebar');
+const headerButtons = document.querySelector('.header-buttons');
 
 let isRecording = false;
 let currentTranscript = '';
@@ -112,7 +117,7 @@ function saveTranscript() {
   let fullTranscript = `${meetingTitle}\n\n`;
   let cleanTranscript = `${meetingTitle}\n\n`;
 
-  chatbox.childNodes.forEach(node => {
+  chatbox.childNodes.forEach((node) => {
     const speaker = node.querySelector('strong').textContent;
     const message = node.childNodes[1].textContent.trim();
     const timeStamp = node.querySelector('.timestamp').textContent;
@@ -128,7 +133,7 @@ function saveTranscript() {
 
   return {
     fullTranscript,
-    cleanTranscript
+    cleanTranscript,
   };
 }
 
@@ -150,4 +155,9 @@ saveCleanButton.addEventListener('click', () => {
   link.href = url;
   link.download = `clean_transcript_${new Date().toISOString().replace(/:|\./g, '_')}.txt`;
   link.click();
+});
+
+hamburgerMenuButton.addEventListener('click', () => {
+  sidebar.classList.toggle('sidebar-open');
+  headerButtons.classList.toggle('header-buttons-open');
 });
